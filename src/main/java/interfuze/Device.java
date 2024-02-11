@@ -65,6 +65,37 @@ public class Device {
 		return (double) (totalRainfall / count);
 	}
 
+	/**
+	 * Calculates the change in rainfall since a given time in millimeters (mm)
+	 * 
+	 * @param time The time to get the change in rainfall since
+	 * @return The change in rainfall since the given time in millimeters (mm)
+	 */
+	public double getChangeInRainfallSince(long time) {
+		double totalRainfall = 0;
+		
+		// Sorting the observations by time	
+		observations.sort((o1, o2) -> Long.compare(o1.getObservationTime(), o2.getObservationTime()));
+
+		// Getting the first observation
+		Observation first = null;
+		for (Observation observation : observations) {
+			if (observation.getObservationTime() > time) {
+				first = observation;
+				break;
+			}
+		}
+
+		// Checking if there are no observations
+		if (first == null) { return 0; }
+
+		// Getting the last observation
+		Observation last = observations.get(observations.size() - 1);
+
+		// Calculating the change in rainfall
+		return last.getRainfall() - first.getRainfall();
+	}
+
 	// ---- Setters ---- //
 
 	/**

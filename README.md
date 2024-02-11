@@ -20,4 +20,4 @@ The `run.sh` bash script can be used to run the project without the need to comp
 
 ## Assumptions
 
-- In the Data CSV files the units of the `Rainfall` field is `mm/hour` (the amount of rainfall, millimeters, which has fallen in the past hour).
+- In the Data CSV files the units of the `Rainfall` field has been assumed to be `mm/30 mins` (the amount of rainfall, millimeters, which has fallen in the past thirty minutes). This is based on the recording being at a frequency of 30 mins in the test data.
