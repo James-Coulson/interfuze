@@ -72,8 +72,6 @@ public class Device {
 	 * @return The change in rainfall since the given time in millimeters (mm)
 	 */
 	public double getChangeInRainfallSince(long time) {
-		double totalRainfall = 0;
-		
 		// Sorting the observations by time	
 		observations.sort((o1, o2) -> Long.compare(o1.getObservationTime(), o2.getObservationTime()));
 
