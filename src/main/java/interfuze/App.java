@@ -217,8 +217,6 @@ public class App {
     /**
      * Formats the average rainfall with ANSI colours and a decimal format.
      * 
-     * TODO: If any reading has surpassed a threshold, print a warning message.
-     * 
      * @param df The decimal format
      * @param averageRainfall The average rainfall
      * @return The formatted average rainfall
