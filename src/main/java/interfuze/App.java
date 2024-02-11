@@ -152,7 +152,7 @@ public class App {
             int rainfall;
             try {
                 deviceID = Integer.parseInt(record.get("Device ID"));
-                observationTime = dateFormat.parse(record.get("Time")).getTime();
+                observationTime = dateFormat.parse(record.get("Time")).getTime();  // Time is stored in epoch milliseconds as it is easier to work with
                 rainfall = Integer.parseInt(record.get("Rainfall"));
             } catch (NumberFormatException e) {
                 System.out.println(ANSI_RED + "Error" + ANSI_RESET + " parsing observation - Device ID = " + (record.get("Device ID").equals("") ? "N/A" : record.get("Device ID")) + " - Skipping record");
