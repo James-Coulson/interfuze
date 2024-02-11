@@ -45,6 +45,26 @@ public class Device {
 		this.location = location;
 	}
 
+	// ---- Methods ---- //
+
+	/**
+	 * Calculates the average rainfall since a given time in millimeters per 30 mins (mm/30min)
+	 * 
+	 * @param time The time to get the average rainfall since
+	 * @return The average rainfall since the given time in millimeters per 30 mins (mm/30min)
+	 */
+	public double getAverageRainfallSince(long time) {
+		double totalRainfall = 0;
+		int count = 0;
+		for (Observation observation : observations) {
+			if (observation.getObservationTime() > time) {
+				totalRainfall += observation.getRainfall();
+				count++;
+			}
+		}
+		return (double) (totalRainfall / count);
+	}
+
 	// ---- Setters ---- //
 
 	/**
