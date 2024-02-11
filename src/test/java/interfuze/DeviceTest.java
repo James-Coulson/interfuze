@@ -51,5 +51,13 @@ public class DeviceTest {
 
         // The average rainfall since 1.5 seconds ago should be 10
         assertEquals(10, device.getAverageRainfallSince(currentTime - 1500), 0.001);
+
+        // Test change in rainfall since
+        assertEquals(-10, device.getChangeInRainfallSince(currentTime - 2500), 0.001);
+
+        // Test exceed threshold
+        assertFalse(device.isObservationsExceedingThresholdSince(50, currentTime - 2500));
+        assertFalse(device.isObservationsExceedingThresholdSince(20, currentTime - 2500));
+        assertTrue(device.isObservationsExceedingThresholdSince(5, currentTime - 2500));
     }
 }
