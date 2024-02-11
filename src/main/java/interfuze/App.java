@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -82,14 +84,18 @@ public class App {
      * @param devices The map of devices
      * @param filePath The file path of the observations CSV
      * @throws IOException If there is an error reading the file
+     * @return The current time (the time of the last observation parsed)
      */
-    private static void parseObservationsCSV(Map<Integer, Device> devices, String filePath) throws IOException {
+    private static long parseObservationsCSV(Map<Integer, Device> devices, String filePath) throws IOException {
         // Get file reader and parse the CSV
         Reader reader = Files.newBufferedReader(Paths.get(filePath));
         CSVParser csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
 
         // Parser for date time
         SimpleDateFormat dateFormat = new SimpleDateFormat("d/MM/yyyy h:mm");
+
+        // Current time
+        long currentTime = Long.MIN_VALUE;
 
         // Iterate through the records and store the observations
         for (CSVRecord record : csvParser) {
@@ -108,12 +114,18 @@ public class App {
                 continue;
             }
 
+            // Add the observation to the device
             Observation observation = new Observation(deviceID, observationTime, rainfall);
             devices.get(deviceID).addObservation(observation);
+
+            // Update the current time
+            if (observationTime > currentTime) { currentTime = observationTime; }
 
             // TODO: Verbose flag only?
             System.out.println(observation.toString());
         }
+
+        return currentTime;
     }
 
     // ---- Main ---- //
@@ -130,6 +142,9 @@ public class App {
         // Map of devices
         Map<Integer, Device> devices = new HashMap<>();
 
+        // Current time
+        long currentTime;
+
         // ---- Parsing CSVs ---- //
 
         // Parse the devices CSV
@@ -144,9 +159,10 @@ public class App {
         }
 
         // Parse the observations CSV
+        // TODO: Allow multiple observations files
         System.out.println("\n==== Loading Observations ====\n");
         try {
-            parseObservationsCSV(devices, OBSERVATIONS_CSV_FILE_PATH);
+            currentTime = parseObservationsCSV(devices, OBSERVATIONS_CSV_FILE_PATH);
         } catch (IOException e) {
             // TODO: Add verbose option to help debugging - e.printStackTrace();
             System.out.println("Error parsing observations CSV at " + OBSERVATIONS_CSV_FILE_PATH);
@@ -154,19 +170,26 @@ public class App {
             return;
         }
 
-        // CSVParser csvParser;
-        // try {
-        //         Reader reader = Files.newBufferedReader(Paths.get(CSV_FILE_PATH));
-        //         csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
-        // } catch (IOException e) {
-        //         e.printStackTrace();
-        //         System.exit(1);
-        //         return;
-        // }
+        // -- Data Processing -- //
 
-        // // ! ---- TESTING CSV READING ---- ! //
-        // for (CSVRecord record : csvParser) {
-        //         System.out.println(record.get("Phone"));
-        // }
+        // Calculate observation lookback window
+        long lookbackWindow = currentTime - TimeUnit.HOURS.toMillis(4); // 4 hours
+
+        // DecimalFormat class (rounds doubles to 2 decimal places)
+        DecimalFormat df = new DecimalFormat("#.##");
+
+        // Iterate through the devices and print the observations
+        System.out.println("\n==== Observations ====\n");
+        for (Device device : devices.values()) {
+            String output = device.getDeviceName() + "\t(" + device.getLocation() + ")\t- ";
+
+            // Get average rainfall
+            double averageRainfall = device.getAverageRainfallSince(lookbackWindow);
+
+            // Format the output
+            output +=  df.format(averageRainfall) + " mm/30min";
+
+            System.out.println(output);
+        }
     }
 }
