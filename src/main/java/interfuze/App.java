@@ -14,28 +14,41 @@ import org.apache.commons.csv.CSVRecord;
  */
 public class App {
 
+    // ---- Variables ---- //
+
     /**
      * CSV file path
      */
     public static String CSV_FILE_PATH = "./test.csv";
 
+    /**
+     * Device CSV file path
+     */
+    public static String DEVICE_CSV_FILE_PATH = "./Devices.csv";
+
+    // ---- Main ---- //
+
     public static void main( String[] args )
     {
-       // ---- Parsing CSV ---- //
+        // -- Initialising Data Structures -- //
 
-       CSVParser csvParser;
-       try {
-            Reader reader = Files.newBufferedReader(Paths.get(CSV_FILE_PATH));
-            csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
-       } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-            return;
-       }
+        // HashMap
 
-       // ! ---- TESTING CSV READING ---- ! //
-       for (CSVRecord record : csvParser) {
-            System.out.println(record.get("Phone"));
-       }
+        // ---- Parsing CSV ---- //
+
+        CSVParser csvParser;
+        try {
+                Reader reader = Files.newBufferedReader(Paths.get(CSV_FILE_PATH));
+                csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
+        } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+                return;
+        }
+
+        // ! ---- TESTING CSV READING ---- ! //
+        for (CSVRecord record : csvParser) {
+                System.out.println(record.get("Phone"));
+        }
     }
 }

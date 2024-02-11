@@ -60,12 +60,7 @@ public class Device {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + deviceID;
-		result = prime * result + ((deviceName == null) ? 0 : deviceName.hashCode());
-		result = prime * result + ((location == null) ? 0 : location.hashCode());
-		return result;
+		return deviceID;
 	}
 
 	@Override
@@ -90,7 +85,5 @@ public class Device {
 		} else if (!location.equals(other.location))
 			return false;
 		return true;
-	}	
-
-	
+	}
 }
