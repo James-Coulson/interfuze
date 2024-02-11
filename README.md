@@ -6,7 +6,7 @@ This has been written in Java (+ Maven) as I do not have much experience program
 
 ## Initial Setup and CSV Package
 
-This repository was initialised prior to completing the challenge with the only actions being to initialise the Java project and setup/test the CSV package (as per email instructions).
+This repository was initialised prior to starting the challenge with the only actions being to initialise the Java project and setup/test the CSV package (as per email instructions).
 
 The [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/) library has been used and the below command was used to generate the Java project.
 
