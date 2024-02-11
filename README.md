@@ -2,6 +2,8 @@
 
 This repository contains the code for the Interfuze coding challenge (completed by James Coulson). This has been written in Java (+ Maven) as I do not have much experience programming in .NET.
 
+This app also includes unit tests which are located at `src/test/java/interfuze`.
+
 **NOTE:** As part of the assignment it is required that the customer be supplied a README detailing any assumptions. This can be found at the bottom of this document.
 
 ## Initial Setup and CSV Package
