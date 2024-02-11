@@ -92,15 +92,16 @@ public class App {
                 deviceName = record.get("Device Name");
                 location = record.get("Location");
             } catch (NumberFormatException e) {
-                System.out.println("Error parsing device ID - Device ID = " + (record.get("Device ID").equals("") ? "N/A" : record.get("Device ID")) + " - Skipping record");
+                if (VERBOSE) { System.out.println("Error parsing device ID - Device ID = " + (record.get("Device ID").equals("") ? "N/A" : record.get("Device ID")) + " - Skipping record"); }
                 continue;
             }
 
+            // Add the device to the map
             Device device = new Device(deviceID, deviceName, location);
             devices.put(deviceID, device);
 
-            // TODO: Verbose flag only?
-            // System.out.println(device.toString());
+            // Verbose output
+            if (VERBOSE) { System.out.println(device.toString()); }
         }
     }
 
@@ -149,8 +150,8 @@ public class App {
             // Update the current time
             if (observationTime > currentTime) { currentTime = observationTime; }
 
-            // TODO: Verbose flag only?
-            // System.out.println(observation.toString());
+            // Verbose output
+            if (VERBOSE) { System.out.println(observation.toString()); }
         }
 
         return currentTime;
@@ -176,8 +177,11 @@ public class App {
 
         // Iterate through the files
         for (File file : files) {
-            System.out.println(file.getName());
-            if (file.getName().equals(DEVICE_CSV_FILE_NAME)) { continue; } // Skip the devices CSV file
+            // Skip the devices CSV file
+            if (file.getName().equals(DEVICE_CSV_FILE_NAME)) { continue; }
+
+            // Verbose output
+            if (VERBOSE) { System.out.println("\n Loading Observations CSV: " + file.getName() + "\n");}
 
             // Parse the observations CSV
             long fileTime = parseObservationsCSV(devices, file.getPath());
@@ -199,10 +203,12 @@ public class App {
      * @return The formatted average rainfall
      */
     private static String formatAverageRainfall(DecimalFormat df, double averageRainfall, boolean exceedThreshold) {
+        // Check if the average rainfall has surpassed a threshold
         if (exceedThreshold) {
             return ANSI_RED + df.format(averageRainfall) + ANSI_RESET + " mm " + ANSI_RED + "!!!" + ANSI_RESET;
         }
 
+        // Format the average rainfall with ANSI colours
         if (averageRainfall < 10.0d) {
             return ANSI_GREEN + df.format(averageRainfall) + ANSI_RESET + " mm";
         } else if (averageRainfall < 15.0d) {
@@ -327,29 +333,31 @@ public class App {
         // -- Parsing CSVs -- //
 
         // Parse the devices CSV
-        System.out.println("\n==== Loading Devices ====\n");
+        if (VERBOSE) { System.out.println("\n==== Loading Devices ====\n"); }
         try {
             parseDevicesCSV(devices, OBSERVATIONS_FILE_PATH + "/" + DEVICE_CSV_FILE_NAME);
         } catch (Exception e) {
-            // TODO: Add verbose option to help debugging - e.printStackTrace();
+            if (VERBOSE) { e.printStackTrace(); }
             System.out.println("Error parsing devices CSV at " + OBSERVATIONS_FILE_PATH + "/" + DEVICE_CSV_FILE_NAME);
             System.exit(1);
             return;
         }
 
         // Parse the observations CSV
-        // TODO: Allow multiple observations files
-        System.out.println("\n==== Loading Observations ====\n");
+        if (VERBOSE) { System.out.println("\n==== Loading Observations ====\n"); }
         try {
             currentTime = parseObservationsCSVs(devices, OBSERVATIONS_FILE_PATH);
         } catch (IOException e) {
-            // TODO: Add verbose option to help debugging - e.printStackTrace();
+            if (VERBOSE) { e.printStackTrace(); }
             System.out.println("Error parsing observations CSV at " + OBSERVATIONS_FILE_PATH);
             System.exit(1);
             return;
         }
 
         // -- Data Processing & Output-- //
+
+        // Verbose output
+        if (VERBOSE) { System.out.println("\n==== Data Processing & Outputs ====\n"); }
 
         // Calculate observation lookback window
         long lookbackWindow = currentTime - TimeUnit.HOURS.toMillis(4); // 4 hours
