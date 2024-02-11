@@ -30,7 +30,7 @@ Before you begin using the tool you are able to see the options which can be use
 
 This will print the help menu in your terminal which can be used as a reference for future use.
 
-Now, to get started using the tool ensure that the data that is to be processed is stored in a folder titled `data` within the directory the app will be running. This includes the Devices CSV which should be named `Devices.csv`. Then by running the following command, the tool will process these data files and output the summarised data in a tabular format.
+Now, to get started using the tool ensure that the data file that are to be processed are stored in a folder titled `data` within the directory the app will be running. This includes the Devices CSV which should be named `Devices.csv`. Then by running the following command, the tool will process these data files and output the summarised data in a tabular format.
 
 	./run.sh
 
@@ -39,3 +39,5 @@ Now, to get started using the tool ensure that the data that is to be processed 
 - By default, the tool assumes that the data that need to be processed is stored in a local `./data` directory (containing the Devices CSV file). This can be overwritten using the `-o` or `--observations` option.
 - It is assumed that the Devices CSV file is contained within the `./data` directory and is named `Devices.csv`. However, while the file can be overwritten using the `-d` or `--devices` CLI options, it will always be assumed to be contained within the `./data` folder.
 - All data and device files will be in the format of a CSV file, and have the `.csv` file extension. If this is not the case the tool will skip processing them.
+- The Devices CSV file has the following headers: `Device ID`, `Device Name`, and `Location`.
+- The Data/Observations CSV files have the following headers: `Device ID`, `Time`, `Rainfall`. Additionally that the `Time` values are in form `d/MM/yyyy h:mm`.
