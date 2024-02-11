@@ -42,6 +42,9 @@ public class App {
 
     // ---- CLI Options ---- //
 
+    /**
+     * Verbose output flag
+     */
     public static boolean VERBOSE = false;
 
     // ---- ANSI Colours ---- //

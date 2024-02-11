@@ -13,6 +13,10 @@ import org.junit.Test;
  * @see Device
  */
 public class DeviceTest {
+
+    /**
+     * Tests the Device class
+     */
 	@Test
     public void testDevice() {
         // Test data

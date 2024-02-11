@@ -39,14 +39,29 @@ public class Observation {
 
 	// ---- Getters ---- //
 	
+	/**
+	 * Gets the device ID
+	 * 
+	 * @return The device ID
+	 */
 	public int getDeviceID() {
 		return deviceID;
 	}
 
+	/**
+	 * Gets the observation time
+	 * 
+	 * @return The observation time
+	 */
 	public long getObservationTime() {
 		return observationTime;
 	}
 
+	/**
+	 * Gets the rainfall amount
+	 * 
+	 * @return The rainfall amount
+	 */
 	public int getRainfall() {
 		return rainfall;
 	}

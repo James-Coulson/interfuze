@@ -13,6 +13,10 @@ import org.junit.Test;
  * @see Observation
  */
 public class ObservationTest {
+
+    /**
+     * Tests the Observation class
+     */
 	@Test
     public void testObservation() {
         // Test data
