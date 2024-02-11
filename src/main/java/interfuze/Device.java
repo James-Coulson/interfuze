@@ -96,6 +96,22 @@ public class Device {
 		return last.getRainfall() - first.getRainfall();
 	}
 
+	/**
+	 * Checks if the observations exceed a threshold since a given time
+	 * 
+	 * @param threshold The threshold to check
+	 * @param time The time to check since
+	 * @return True if the observations exceed the threshold since the given time, false otherwise
+	 */
+	public boolean isObservationsExceedingThresholdSince(int threshold, long time) {
+		for (Observation observation : observations) {
+			if (observation.getObservationTime() > time && observation.getRainfall() > threshold) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// ---- Setters ---- //
 
 	/**
