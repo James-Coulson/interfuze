@@ -150,6 +150,46 @@ public class App {
         return currentTime;
     }
 
+    /**
+     * Formats the average rainfall with ANSI colours and a decimal format.
+     * 
+     * TODO: If any reading has surpassed a threshold, print a warning message.
+     * 
+     * @param df The decimal format
+     * @param averageRainfall The average rainfall
+     * @return The formatted average rainfall
+     */
+    private static String formatAverageRainfall(DecimalFormat df, double averageRainfall, boolean exceedThreshold) {
+        if (exceedThreshold) {
+            return ANSI_RED + df.format(averageRainfall) + ANSI_RESET + " mm " + ANSI_RED + "!!!" + ANSI_RESET;
+        }
+
+        if (averageRainfall < 10.0d) {
+            return ANSI_GREEN + df.format(averageRainfall) + ANSI_RESET + " mm";
+        } else if (averageRainfall < 15.0d) {
+            return ANSI_YELLOW + df.format(averageRainfall) + ANSI_RESET + " mm";
+        } else {
+            return ANSI_RED + df.format(averageRainfall) + ANSI_RESET + " mm";
+        }
+    }
+
+    /**
+     * Formats the change in rainfall with ANSI colours and a decimal format.
+     * 
+     * @param df The decimal format
+     * @param changeInRainfall The change in rainfall
+     * @return The formatted change in rainfall
+     */
+    private static String formatRainfallChange(DecimalFormat df, double changeInRainfall) {
+        if (changeInRainfall > 0.005d) {
+            return ANSI_GREEN + df.format(changeInRainfall) + ANSI_RESET + " mm";
+        } else if (changeInRainfall < 0.005d) {
+            return ANSI_YELLOW + df.format(changeInRainfall) + ANSI_RESET + " mm";
+        }
+
+        return df.format(changeInRainfall) + " mm";
+    }
+
     // ---- Main ---- //
 
     /**
@@ -192,7 +232,7 @@ public class App {
             return;
         }
 
-        // -- Data Processing -- //
+        // -- Data Processing & Output-- //
 
         // Calculate observation lookback window
         long lookbackWindow = currentTime - TimeUnit.HOURS.toMillis(4); // 4 hours
@@ -200,24 +240,32 @@ public class App {
         // DecimalFormat class (rounds doubles to 2 decimal places)
         DecimalFormat df = new DecimalFormat("#.##");
 
-        // Iterate through the devices and print the observations
-        System.out.println("\n==== Observations ====\n");
+        // Creating table header
+        System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
+        System.out.printf("| %-20s | %-20s | %-20s | %-20s | %-20s |\n", "Device Name", "Device ID", "Location", "Average Rainfall", "Change in Rainfall");
+        System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
         for (Device device : devices.values()) {
-            String output = device.getDeviceName() + "\t(" + device.getLocation() + ")\t- ";
-
-            // Get average rainfall
+            // Get average rainfall and check if it has surpassed a threshold
             double averageRainfall = device.getAverageRainfallSince(lookbackWindow);
+            boolean exceedThreshold = device.isObservationsExceedingThresholdSince(10, lookbackWindow);
+            String averageRainfallOutput = formatAverageRainfall(df, averageRainfall, exceedThreshold);
 
-            // Format the output
-            output +=  df.format(averageRainfall) + " mm";
 
             // Get change in rainfall
             double changeInRainfall = device.getChangeInRainfallSince(lookbackWindow);
+            String changeInRainfallOutput = formatRainfallChange(df, changeInRainfall);
 
-            // Format the output
-            output += "\t\t" + ANSI_RED + df.format(changeInRainfall) + ANSI_RESET + " mm";
+            // Calculating output adjustment for ANSI colour codes (if threshold is exceeded an adjustment is made to the output width to account for the extra characters in the ANSI colour codes)
+            int outputAdjustment = 29 + (exceedThreshold ? 9 : 0);
 
-            System.out.println(output);
+            // Creating table row
+            // * Note: The final two fields speocify %-29s to allow for the ANSI colour codes.
+            System.out.printf("| %-20s | %-20s | %-20s | %-" + outputAdjustment + "s | %-29s |\n", device.getDeviceName(), device.getDeviceID(), device.getLocation(), averageRainfallOutput, changeInRainfallOutput);
         }
+
+        // Creating table footer
+        System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
+        System.out.printf("| %-148s |\n", "Legend: " + ANSI_GREEN + "Green" + ANSI_RESET + " = Low (< 10mm), " + ANSI_YELLOW + "Yellow" + ANSI_RESET + " = Medium (< 15mm), " + ANSI_RED + "Red" + ANSI_RESET + " = High (>= 15mm), " + ANSI_RED + "!!!" + ANSI_RESET + " = " + 30 + " mm Threshold Exceeded");
+        System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
     }
 }
