@@ -1,5 +1,8 @@
 package interfuze;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Stores the information of a device.
  */
@@ -21,6 +24,11 @@ public class Device {
 	 * Device location
 	 */
 	private final String location;
+
+	/**
+	 * List of observations
+	 */
+	private List<Observation> observations = new ArrayList<>();
 
 	// ---- Constructor ---- //
 
