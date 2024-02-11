@@ -38,6 +38,28 @@ public class App {
      */
     public static String OBSERVATIONS_CSV_FILE_PATH = "./Data1.csv";
 
+    // ---- ANSI Colours ---- //
+
+    /**
+     * ANSI colour reset
+     */
+    public static final String ANSI_RESET = "\u001B[0m";
+
+    /**
+     * ANSI colour red
+     */
+    public static final String ANSI_RED = "\u001B[31m";
+
+    /**
+     * ANSI colour green
+     */
+    public static final String ANSI_GREEN = "\u001B[32m";
+
+    /**
+     * ANSI colour yellow (amber)
+     */
+    public static final String ANSI_YELLOW = "\u001B[33m";
+
     // ---- Methods ---- //
 
     /**
@@ -187,7 +209,13 @@ public class App {
             double averageRainfall = device.getAverageRainfallSince(lookbackWindow);
 
             // Format the output
-            output +=  df.format(averageRainfall) + " mm/30min";
+            output +=  df.format(averageRainfall) + " mm";
+
+            // Get change in rainfall
+            double changeInRainfall = device.getChangeInRainfallSince(lookbackWindow);
+
+            // Format the output
+            output += "\t\t" + ANSI_RED + df.format(changeInRainfall) + ANSI_RESET + " mm";
 
             System.out.println(output);
         }

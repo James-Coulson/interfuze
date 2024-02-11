@@ -48,10 +48,10 @@ public class Device {
 	// ---- Methods ---- //
 
 	/**
-	 * Calculates the average rainfall since a given time in millimeters per 30 mins (mm/30min)
+	 * Calculates the average rainfall since a given time in millimeters (mm)
 	 * 
 	 * @param time The time to get the average rainfall since
-	 * @return The average rainfall since the given time in millimeters per 30 mins (mm/30min)
+	 * @return The average rainfall since the given time in millimeters (mm)
 	 */
 	public double getAverageRainfallSince(long time) {
 		double totalRainfall = 0;

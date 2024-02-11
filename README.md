@@ -19,5 +19,3 @@ mvn archetype:generate -DgroupId=interfuze -DartifactId=interfuze -DarchetypeArt
 The `run.sh` bash script can be used to run the project without the need to compile the project into a .jar (this may require `chmod +x run.sh` to allow for the script to be run).
 
 ## Assumptions
-
-- In the Data CSV files the units of the `Rainfall` field has been assumed to be `mm/30 mins` (the amount of rainfall, millimeters, which has fallen in the past thirty minutes). This is based on the recording being at a frequency of 30 mins in the test data.
