@@ -411,7 +411,7 @@ public class App {
 
         // Creating table footer
         System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
-        System.out.printf("| %-148s |\n", "Legend: " + ANSI_GREEN + "Green" + ANSI_RESET + " = Low (< 10mm), " + ANSI_YELLOW + "Yellow" + ANSI_RESET + " = Medium (< 15mm), " + ANSI_RED + "Red" + ANSI_RESET + " = High (>= 15mm), " + ANSI_RED + "!!!" + ANSI_RESET + " = " + THRESHOLD + " mm Threshold Exceeded");
+        System.out.printf("| %-148s |\n", "Legend: " + ANSI_GREEN + "Green" + ANSI_RESET + " = Low (< 10mm), " + ANSI_YELLOW + "Amber" + ANSI_RESET + " = Medium (< 15mm), " + ANSI_RED + "Red" + ANSI_RESET + " = High (>= 15mm), " + ANSI_RED + "!!!" + ANSI_RESET + " = " + THRESHOLD + " mm Threshold Exceeded");
         System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
     }
 }
