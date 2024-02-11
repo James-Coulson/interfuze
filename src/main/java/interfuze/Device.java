@@ -45,16 +45,42 @@ public class Device {
 		this.location = location;
 	}
 
+	// ---- Setters ---- //
+
+	/**
+	 * Adds an observation to the device
+	 * 
+	 * @param observation The observation to add
+	 */
+	public void addObservation(Observation observation) {
+		observations.add(observation);
+	}
+
 	// ---- Getters ---- //
 
+	/**
+	 * Gets the device ID
+	 * 
+	 * @return The device ID
+	 */
 	public int getDeviceID() {
 		return deviceID;
 	}
 
+	/**
+	 * Gets the device name
+	 * 
+	 * @return The device name
+	 */
 	public String getDeviceName() {
 		return deviceName;
 	}
 
+	/**
+	 * Gets the device location
+	 * 
+	 * @return The device location
+	 */
 	public String getLocation() {
 		return location;
 	}
