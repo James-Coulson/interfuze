@@ -23,6 +23,11 @@ public class App {
     // ---- Variables ---- //
 
     /**
+     * Threshold for high rainfall
+     */
+    public static int THRESHOLD = 30;
+
+    /**
      * CSV file path
      */
     public static String CSV_FILE_PATH = "./test.csv";
@@ -36,7 +41,7 @@ public class App {
      * Observations CSV file path
      * TODO: Change to use command line arguments (possible hanbdle multiple observations files).
      */
-    public static String OBSERVATIONS_CSV_FILE_PATH = "./Data1.csv";
+    public static String OBSERVATIONS_CSV_FILE_PATH = "./Data2.csv";
 
     // ---- ANSI Colours ---- //
 
@@ -94,7 +99,7 @@ public class App {
             devices.put(deviceID, device);
 
             // TODO: Verbose flag only?
-            System.out.println(device.toString());
+            // System.out.println(device.toString());
         }
     }
 
@@ -144,7 +149,7 @@ public class App {
             if (observationTime > currentTime) { currentTime = observationTime; }
 
             // TODO: Verbose flag only?
-            System.out.println(observation.toString());
+            // System.out.println(observation.toString());
         }
 
         return currentTime;
@@ -174,19 +179,13 @@ public class App {
     }
 
     /**
-     * Formats the change in rainfall with ANSI colours and a decimal format.
+     * Formats the change in rainfall to a decimal format.
      * 
      * @param df The decimal format
      * @param changeInRainfall The change in rainfall
      * @return The formatted change in rainfall
      */
     private static String formatRainfallChange(DecimalFormat df, double changeInRainfall) {
-        if (changeInRainfall > 0.005d) {
-            return ANSI_GREEN + df.format(changeInRainfall) + ANSI_RESET + " mm";
-        } else if (changeInRainfall < 0.005d) {
-            return ANSI_YELLOW + df.format(changeInRainfall) + ANSI_RESET + " mm";
-        }
-
         return df.format(changeInRainfall) + " mm";
     }
 
@@ -197,8 +196,7 @@ public class App {
      * 
      * @param args The arguments
      */
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) {
         // -- Initialising Data Structures -- //
 
         // Map of devices
@@ -247,7 +245,7 @@ public class App {
         for (Device device : devices.values()) {
             // Get average rainfall and check if it has surpassed a threshold
             double averageRainfall = device.getAverageRainfallSince(lookbackWindow);
-            boolean exceedThreshold = device.isObservationsExceedingThresholdSince(10, lookbackWindow);
+            boolean exceedThreshold = device.isObservationsExceedingThresholdSince(THRESHOLD, lookbackWindow);
             String averageRainfallOutput = formatAverageRainfall(df, averageRainfall, exceedThreshold);
 
 
@@ -259,13 +257,12 @@ public class App {
             int outputAdjustment = 29 + (exceedThreshold ? 9 : 0);
 
             // Creating table row
-            // * Note: The final two fields speocify %-29s to allow for the ANSI colour codes.
-            System.out.printf("| %-20s | %-20s | %-20s | %-" + outputAdjustment + "s | %-29s |\n", device.getDeviceName(), device.getDeviceID(), device.getLocation(), averageRainfallOutput, changeInRainfallOutput);
+            System.out.printf("| %-20s | %-20s | %-20s | %-" + outputAdjustment + "s | %-20s |\n", device.getDeviceName(), device.getDeviceID(), device.getLocation(), averageRainfallOutput, changeInRainfallOutput);
         }
 
         // Creating table footer
         System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
-        System.out.printf("| %-148s |\n", "Legend: " + ANSI_GREEN + "Green" + ANSI_RESET + " = Low (< 10mm), " + ANSI_YELLOW + "Yellow" + ANSI_RESET + " = Medium (< 15mm), " + ANSI_RED + "Red" + ANSI_RESET + " = High (>= 15mm), " + ANSI_RED + "!!!" + ANSI_RESET + " = " + 30 + " mm Threshold Exceeded");
+        System.out.printf("| %-148s |\n", "Legend: " + ANSI_GREEN + "Green" + ANSI_RESET + " = Low (< 10mm), " + ANSI_YELLOW + "Yellow" + ANSI_RESET + " = Medium (< 15mm), " + ANSI_RED + "Red" + ANSI_RESET + " = High (>= 15mm), " + ANSI_RED + "!!!" + ANSI_RESET + " = " + THRESHOLD + " mm Threshold Exceeded");
         System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
     }
 }
