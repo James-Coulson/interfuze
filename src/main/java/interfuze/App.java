@@ -1,5 +1,6 @@
 package interfuze;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -7,7 +8,9 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +23,7 @@ import org.apache.commons.csv.CSVRecord;
  */
 public class App {
 
-    // ---- Variables ---- //
+    // ---- Constants ---- //
 
     /**
      * Threshold for high rainfall
@@ -28,20 +31,18 @@ public class App {
     public static int THRESHOLD = 30;
 
     /**
-     * CSV file path
+     * Default data file path
      */
-    public static String CSV_FILE_PATH = "./test.csv";
+    private static String OBSERVATIONS_FILE_PATH = "./data";
 
     /**
      * Device CSV file path
      */
-    public static String DEVICE_CSV_FILE_PATH = "./Devices.csv";
+    public static String DEVICE_CSV_FILE_NAME = "Devices.csv";
 
-    /**
-     * Observations CSV file path
-     * TODO: Change to use command line arguments (possible hanbdle multiple observations files).
-     */
-    public static String OBSERVATIONS_CSV_FILE_PATH = "./Data2.csv";
+    // ---- CLI Options ---- //
+
+    public static boolean VERBOSE = false;
 
     // ---- ANSI Colours ---- //
 
@@ -156,6 +157,39 @@ public class App {
     }
 
     /**
+     * Parses multiple observations CSV files and stores the observations in the devices.
+     *
+     * @param devices The map of devices
+     * @param  dirPath The directory path of the observations CSVs
+     * @throws IOException If there is an error reading the file
+     * @return The current time (the time of the last observation parsed)
+     */
+    public static long parseObservationsCSVs(Map<Integer, Device> devices, String dirPath) throws IOException {
+        // Current time
+        long currentTime = Long.MIN_VALUE;
+        
+        // Get directory
+        File dir = new File(OBSERVATIONS_FILE_PATH);
+
+        // Get all CSV files in the directory
+        File[] files = dir.listFiles((d, name) -> name.endsWith(".csv"));
+
+        // Iterate through the files
+        for (File file : files) {
+            System.out.println(file.getName());
+            if (file.getName().equals(DEVICE_CSV_FILE_NAME)) { continue; } // Skip the devices CSV file
+
+            // Parse the observations CSV
+            long fileTime = parseObservationsCSV(devices, file.getPath());
+
+            // Update the current time
+            if (fileTime > currentTime) { currentTime = fileTime; }
+        }
+
+        return currentTime;
+    }
+
+    /**
      * Formats the average rainfall with ANSI colours and a decimal format.
      * 
      * TODO: If any reading has surpassed a threshold, print a warning message.
@@ -189,6 +223,86 @@ public class App {
         return df.format(changeInRainfall) + " mm";
     }
 
+    /**
+     * Parses the command line arguments.
+     *
+     * @param args The command line arguments
+     */
+    private static void parseArgs(String[] args) {
+        // Create iterator
+        Iterator<String> iter = Arrays.stream(args).iterator();
+
+        // Iterate through the arguments
+        while (iter.hasNext()) {
+            String arg = iter.next();
+            switch (arg) {
+
+                // Verbose
+                case "-v":
+                case "--verbose":
+                    VERBOSE = true;
+                    break;
+
+                // Manually set threshold
+                case "-t":
+                case "--threshold":
+                    if (iter.hasNext()) {
+                        try {
+                            THRESHOLD = Integer.parseInt(iter.next());
+                        } catch (NumberFormatException e) {
+                            System.out.println("Error parsing threshold - Threshold = " + (iter.next().equals("") ? "N/A" : iter.next()));
+                            System.exit(1);
+                        }
+                    } else {
+                        System.out.println("Error parsing threshold - Threshold = N/A");
+                        System.exit(1);
+                    }
+                    break;
+                
+                // Devices file name
+                case "-d":
+                case "--devices":
+                    if (iter.hasNext()) {
+                        DEVICE_CSV_FILE_NAME = iter.next();
+                    } else {
+                        System.out.println("Error parsing devices file name - Devices File Path = N/A");
+                        System.exit(1);
+                    }
+                    break;
+                
+                // Observations file path
+                case "-o":
+                case "--observations":
+                    if (iter.hasNext()) {
+                        OBSERVATIONS_FILE_PATH = iter.next();
+                    } else {
+                        System.out.println("Error parsing observations file path - Observations File Path = N/A");
+                        System.exit(1);
+                    }
+                    break;
+
+                // Help
+                case "-h":
+                case "--help":
+                    System.out.println("Usage: java -jar interfuze.jar [OPTIONS]");
+                    System.out.println("Options:");
+                    System.out.println("  -h, --help\t\t\t\t\t\tShow this help message");
+                    System.out.println("  -v, --verbose\t\t\t\t\t\tVerbose output");
+                    System.out.println("  -t, --threshold <THRESHOLD>\t\t\t\tManually set rainfall threshold (default = 30)");
+                    System.out.println("  -d, --devices <DEVICES_FILE_NAME>\t\t\tSet devices file name, within observations directory (default = Devices.csv)");
+                    System.out.println("  -o, --observations <OBSERVATIONS_FILE_PATH>\t\tSet observations file path (default = ./data)");
+                    System.exit(0);
+                    break;
+
+                // Unknown argument
+                default:
+                    System.out.println("Error parsing arguments - Unknown argument: " + arg + " - try using --help");
+                    System.exit(1);
+                    break;
+            }
+        }
+    }
+
     // ---- Main ---- //
 
     /**
@@ -197,6 +311,11 @@ public class App {
      * @param args The arguments
      */
     public static void main( String[] args ) {
+
+        // -- Command Line Arguments -- //
+
+        parseArgs(args);
+
         // -- Initialising Data Structures -- //
 
         // Map of devices
@@ -205,15 +324,15 @@ public class App {
         // Current time
         long currentTime;
 
-        // ---- Parsing CSVs ---- //
+        // -- Parsing CSVs -- //
 
         // Parse the devices CSV
         System.out.println("\n==== Loading Devices ====\n");
         try {
-            parseDevicesCSV(devices, DEVICE_CSV_FILE_PATH);
-        } catch (IOException e) {
+            parseDevicesCSV(devices, OBSERVATIONS_FILE_PATH + "/" + DEVICE_CSV_FILE_NAME);
+        } catch (Exception e) {
             // TODO: Add verbose option to help debugging - e.printStackTrace();
-            System.out.println("Error parsing devices CSV at " + DEVICE_CSV_FILE_PATH);
+            System.out.println("Error parsing devices CSV at " + OBSERVATIONS_FILE_PATH + "/" + DEVICE_CSV_FILE_NAME);
             System.exit(1);
             return;
         }
@@ -222,10 +341,10 @@ public class App {
         // TODO: Allow multiple observations files
         System.out.println("\n==== Loading Observations ====\n");
         try {
-            currentTime = parseObservationsCSV(devices, OBSERVATIONS_CSV_FILE_PATH);
+            currentTime = parseObservationsCSVs(devices, OBSERVATIONS_FILE_PATH);
         } catch (IOException e) {
             // TODO: Add verbose option to help debugging - e.printStackTrace();
-            System.out.println("Error parsing observations CSV at " + OBSERVATIONS_CSV_FILE_PATH);
+            System.out.println("Error parsing observations CSV at " + OBSERVATIONS_FILE_PATH);
             System.exit(1);
             return;
         }
