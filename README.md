@@ -26,7 +26,7 @@ The tool also incorporates a number of options, including a help menu, to config
 
 # Customer README
 
-Welcome to the *Fuzion, inc CLI* tool READNE file. In this document you will find details of how to get started using this command line tool, as well as some general assumptions around its usage.
+Welcome to the *Fuzion, inc CLI* tool README file. In this document you will find details of how to get started using this command line tool, as well as some general assumptions around its usage.
 
 ## Getting Started
 
