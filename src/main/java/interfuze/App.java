@@ -71,8 +71,6 @@ public class App {
     /**
      * Parses the devices CSV file and stores the devices in a map.
      * 
-     * TODO: Add statistics about the successrate of parsing the CSV (number of errors, etc).
-     * 
      * @param devices The map of devices
      * @param filePath The file path of the devices CSV
      * @throws IOException If there is an error reading the file
@@ -82,8 +80,16 @@ public class App {
         Reader reader = Files.newBufferedReader(Paths.get(filePath));
         CSVParser csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
 
+        // Performance statistics
+        int numErrors = 0;
+        int numRecords = 0;
+
         // Iterate through the records and store the devices
         for (CSVRecord record : csvParser) {
+            // Increment the number of records
+            numRecords++;
+
+            // Parse the record
             int deviceID;
             String deviceName;
             String location;
@@ -92,7 +98,8 @@ public class App {
                 deviceName = record.get("Device Name");
                 location = record.get("Location");
             } catch (NumberFormatException e) {
-                if (VERBOSE) { System.out.println("Error parsing device ID - Device ID = " + (record.get("Device ID").equals("") ? "N/A" : record.get("Device ID")) + " - Skipping record"); }
+                if (VERBOSE) { System.out.println(ANSI_RED + "Error" + ANSI_RESET + " parsing device ID - Device ID = " + (record.get("Device ID").equals("") ? "N/A" : record.get("Device ID")) + " - Skipping record"); }
+                numErrors++;
                 continue;
             }
 
@@ -103,13 +110,14 @@ public class App {
             // Verbose output
             if (VERBOSE) { System.out.println(device.toString()); }
         }
+
+        // Verbose output
+        if (VERBOSE) { System.out.println("\nStatistics:\n - " + (numRecords - numErrors) + " out of " + numRecords + " rows processed successfully"); }
     }
 
     /**
      * Parses the observations CSV file and stores the observations in the devices.
      *
-     * TODO: Add statistics about the successrate of parsing the CSV (number of errors, etc).
-     * 
      * @param devices The map of devices
      * @param filePath The file path of the observations CSV
      * @throws IOException If there is an error reading the file
@@ -126,8 +134,16 @@ public class App {
         // Current time
         long currentTime = Long.MIN_VALUE;
 
+        // Performance statistics
+        int numErrors = 0;
+        int numRecords = 0;
+
         // Iterate through the records and store the observations
         for (CSVRecord record : csvParser) {
+            // Increment the number of records
+            numRecords++;
+
+            // Parse the record
             int deviceID;
             long observationTime;
             int rainfall;
@@ -136,10 +152,12 @@ public class App {
                 observationTime = dateFormat.parse(record.get("Time")).getTime();
                 rainfall = Integer.parseInt(record.get("Rainfall"));
             } catch (NumberFormatException e) {
-                System.out.println("Error parsing observation - Device ID = " + (record.get("Device ID").equals("") ? "N/A" : record.get("Device ID")) + " - Skipping record");
+                System.out.println(ANSI_RED + "Error" + ANSI_RESET + " parsing observation - Device ID = " + (record.get("Device ID").equals("") ? "N/A" : record.get("Device ID")) + " - Skipping record");
+                numErrors++;
                 continue;
             } catch (ParseException e) {
-                System.out.println("Error parsing observation time - Observation Time = " + (record.get("Time").equals("") ? "N/A" : record.get("Time")) + " - Skipping record");
+                System.out.println(ANSI_RED + "Error" + ANSI_RESET + " parsing observation time - Observation Time = " + (record.get("Time").equals("") ? "N/A" : record.get("Time")) + " - Skipping record");
+                numErrors++;
                 continue;
             }
 
@@ -153,6 +171,9 @@ public class App {
             // Verbose output
             if (VERBOSE) { System.out.println(observation.toString()); }
         }
+
+        // Verbose output
+        if (VERBOSE) { System.out.println("\nStatistics:\n - " + (numRecords - numErrors) + " out of " + numRecords + " rows processed successfully"); }
 
         return currentTime;
     }
