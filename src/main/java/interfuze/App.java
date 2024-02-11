@@ -388,9 +388,9 @@ public class App {
         DecimalFormat df = new DecimalFormat("#.##");
 
         // Creating table header
-        System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
-        System.out.printf("| %-20s | %-20s | %-20s | %-20s | %-20s |\n", "Device Name", "Device ID", "Location", "Average Rainfall", "Change in Rainfall");
-        System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
+        System.out.printf("---------------------------------------------------------------------------------------------------------------------------------\n");
+        System.out.printf("| %-20s | %-20s | %-20s | %-25s | %-28s |\n", "Device Name", "Device ID", "Location", "Average Rainfall (4 hrs)", "Change in Rainfall (4 hrs)");
+        System.out.printf("---------------------------------------------------------------------------------------------------------------------------------\n");
         for (Device device : devices.values()) {
             // Get average rainfall and check if it has surpassed a threshold
             double averageRainfall = device.getAverageRainfallSince(lookbackWindow);
@@ -403,15 +403,15 @@ public class App {
             String changeInRainfallOutput = formatRainfallChange(df, changeInRainfall);
 
             // Calculating output adjustment for ANSI colour codes (if threshold is exceeded an adjustment is made to the output width to account for the extra characters in the ANSI colour codes)
-            int outputAdjustment = 29 + (exceedThreshold ? 9 : 0);
+            int outputAdjustment = 34 + (exceedThreshold ? 9 : 0);
 
             // Creating table row
-            System.out.printf("| %-20s | %-20s | %-20s | %-" + outputAdjustment + "s | %-20s |\n", device.getDeviceName(), device.getDeviceID(), device.getLocation(), averageRainfallOutput, changeInRainfallOutput);
+            System.out.printf("| %-20s | %-20s | %-20s | %-" + outputAdjustment + "s | %-28s |\n", device.getDeviceName(), device.getDeviceID(), device.getLocation(), averageRainfallOutput, changeInRainfallOutput);
         }
 
         // Creating table footer
-        System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
-        System.out.printf("| %-148s |\n", "Legend: " + ANSI_GREEN + "Green" + ANSI_RESET + " = Low (< 10mm), " + ANSI_YELLOW + "Amber" + ANSI_RESET + " = Medium (< 15mm), " + ANSI_RED + "Red" + ANSI_RESET + " = High (>= 15mm), " + ANSI_RED + "!!!" + ANSI_RESET + " = " + THRESHOLD + " mm Threshold Exceeded");
-        System.out.printf("--------------------------------------------------------------------------------------------------------------------\n");
+        System.out.printf("---------------------------------------------------------------------------------------------------------------------------------\n");
+        System.out.printf("| %-161s |\n", "Legend: " + ANSI_GREEN + "Green" + ANSI_RESET + " = Low (< 10 mm), " + ANSI_YELLOW + "Amber" + ANSI_RESET + " = Medium (< 15 mm), " + ANSI_RED + "Red" + ANSI_RESET + " = High (>= 15 mm), " + ANSI_RED + "!!!" + ANSI_RESET + " = " + THRESHOLD + " mm Threshold Exceeded");
+        System.out.printf("---------------------------------------------------------------------------------------------------------------------------------\n");
     }
 }
