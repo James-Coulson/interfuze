@@ -16,7 +16,11 @@ mvn archetype:generate -DgroupId=interfuze -DartifactId=interfuze -DarchetypeArt
 
 ## Running the project
 
-The `run.sh` bash script can be used to run the project without the need to compile the project into a .jar (this may require `chmod +x run.sh` to allow for the script to be run). However, if this were to be given to a actual client the application would be bundled into a .jar file and be run directly.
+The `run.sh` bash script can be used to run the project without the need to compile the project into a .jar (this may require `chmod +x run.sh` to allow for the script to be run). However, if this were to be given to an actual client the application would be bundled into a .jar file and be run directly.
+
+The tool also incorporates a number of options, including a help menu, to configure the execution of the app. The help menu can be broughh up by running the below command.
+
+	./run.sh -h
 
 # Customer README
 
