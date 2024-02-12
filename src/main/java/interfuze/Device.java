@@ -57,7 +57,7 @@ public class Device {
 		double totalRainfall = 0;
 		int count = 0;
 		for (Observation observation : observations) {
-			if (observation.getObservationTime() > time) {
+			if (observation.getObservationTime() >= time) {
 				totalRainfall += observation.getRainfall();
 				count++;
 			}
@@ -103,7 +103,7 @@ public class Device {
 	 */
 	public boolean isObservationsExceedingThresholdSince(int threshold, long time) {
 		for (Observation observation : observations) {
-			if (observation.getObservationTime() > time && observation.getRainfall() > threshold) {
+			if (observation.getObservationTime() > time && observation.getRainfall() >= threshold) {
 				return true;
 			}
 		}
@@ -122,6 +122,15 @@ public class Device {
 	}
 
 	// ---- Getters ---- //
+
+	/**
+	 * Gets the observations
+	 * 
+	 * @return The observations
+	 */
+	public List<Observation> getObservations() {
+		return observations;
+	}
 
 	/**
 	 * Gets the device ID

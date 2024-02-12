@@ -132,7 +132,7 @@ public class App {
         CSVParser csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
 
         // Parser for date time
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d/MM/yyyy h:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d/MM/yyyy k:mm");
 
         // Current time
         long currentTime = Long.MIN_VALUE;
@@ -376,6 +376,21 @@ public class App {
             return;
         }
 
+        // Verbose output
+        if (VERBOSE) { System.out.println("Current time set to  epoch = " + currentTime); }
+
+        // Verbose - Print devices
+        if (VERBOSE) {
+            System.out.println("\n==== Devices ====\n");
+            for (Device device : devices.values()) {
+                System.out.println("\n");
+                System.out.println(device.toString());
+                for (Observation observation : device.getObservations()) {
+                    System.out.println(observation.toString());
+                }
+            }
+        }
+
         // -- Data Processing & Output-- //
 
         // Verbose output
@@ -383,6 +398,9 @@ public class App {
 
         // Calculate observation lookback window
         long lookbackWindow = currentTime - TimeUnit.HOURS.toMillis(4); // 4 hours
+
+        // Verbose output
+        if (VERBOSE) { System.out.println("Lookback time set to  epoch = " + lookbackWindow); }
 
         // DecimalFormat class (rounds doubles to 2 decimal places)
         DecimalFormat df = new DecimalFormat("#.##");
