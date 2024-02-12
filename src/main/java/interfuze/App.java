@@ -225,6 +225,9 @@ public class App {
      * @return The formatted average rainfall
      */
     private static String formatAverageRainfall(DecimalFormat df, double averageRainfall, boolean exceedThreshold) {
+        // Check if NaN
+        if (Double.isNaN(averageRainfall)) { return ANSI_RED + "No data" + ANSI_RESET; }
+
         // Check if the average rainfall has surpassed a threshold
         if (exceedThreshold) {
             return ANSI_RED + df.format(averageRainfall) + ANSI_RESET + " mm " + ANSI_RED + "!!!" + ANSI_RESET;
